@@ -53,8 +53,8 @@ def dicHuff (nomFicher):
     nodes = createNodes(dic[eachAlpha] for eachAlpha in dic)
     root = createHuffmanTree(nodes)
     codes = huffmanEncoding(nodes,root)
+    print "----------------------Construction Huffman-------------------------"
     print "dic of Frequency: ", dic
-    print "codage: ",codes
     res = {}
     maxLen = 0
     i=0
@@ -63,6 +63,9 @@ def dicHuff (nomFicher):
         if len(codes[i])>maxLen:
             maxLen=len(codes[i])
         i+=1
+    print "dictionary of Code:", res
+    print "Maximum Length is :", maxLen
+    print "--------------------------------------------------------------------"
     return [res,maxLen]
 
 def arrToStr(arr):
@@ -101,6 +104,8 @@ def enCoder (nomFiche):
     binfile.close()
     #get reversedCode
 
+    print "----------------------Beginning Encodage-------------------------"
+
     reversedCode = []
     for item in code:
         reversedCode.append(item[::-1])
@@ -111,10 +116,14 @@ def enCoder (nomFiche):
     b = arrToStr(code)+severalZero(huffCode[1])
     bb = severalZero(huffCode[1])+arrToStr(reversedCode)
 
+    print "Code B retrieved:", b
+    print "Code B\' retrieved:", bb
     c = ""
     for i in range(len(b)):
         c+=simulateXor(b[i],bb[i])
-    print len(c)
+    print "Code C get: ",c
+
+    print "-------------------------------------------------------------------"
     return [c,huffCode]
 
 def invert_dict(d):
@@ -150,11 +159,9 @@ def decodeForward(c, huffman):
 
 def decodeBackward(c, huffman):
     dict = invert_dict(huffman[0])
-    print "inverse dict:",dict
     maxLen = huffman[1]
     pointer = len(c)-maxLen
     readed = collections.deque(simulerXorString(severalZero(maxLen), c[-maxLen:]))
-    print "read:",readed
     decoded = ""
     while (pointer > maxLen-1 or len(readed) > maxLen):
         tmp = ""
@@ -168,5 +175,15 @@ def decodeBackward(c, huffman):
     return decoded
 if __name__ == '__main__':
     coded = enCoder("test.txt")
+    print "---------------------Le Resultat du decodage forward:-------------------------"
     print decodeForward(coded[0],coded[1])
+    print "---------------------Le Resultat du decodage backward:------------------------"
     print decodeBackward(coded[0],coded[1])
+    print "------------------------------------------------------------------------------"
+    print "on va changer 10eme du C :"
+    newC = coded[0][0:10]+"1"+coded[0][11:len(coded[0])]
+    print "---------------------Le Resultat du decodage forward:-------------------------"
+    print decodeForward(newC, coded[1])
+    print "---------------------Le Resultat du decodage backward:------------------------"
+    print decodeBackward(newC, coded[1])
+    print "------------------------------------------------------------------------------"
